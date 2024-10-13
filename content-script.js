@@ -1,7 +1,9 @@
 function addRoundSelect() {
-    const newDiv = document.createElement('div')
+  const newDiv = document.createElement("div");
 
-    const htmlElement = `<div class="game-options_optionLabel__Vk5xN" style="margin-bottom: 14px">Nombre de rounds</div>
+  const htmlElement = `<div class="game-options_optionLabel__Vk5xN" style="margin-bottom: 14px">${
+    isFrenchURL() ? "Nombre de rounds" : "Round number"
+  }</div>
     <div
       style="
         display: flex;
@@ -23,64 +25,83 @@ function addRoundSelect() {
       >
         +
       </button>
-    </div>`
+    </div>`;
 
-    newDiv.style.marginRight = "30px"
-    newDiv.innerHTML = htmlElement
+  newDiv.style.marginRight = "30px";
+  newDiv.innerHTML = htmlElement;
 
-    const divSettings = document.querySelector("div.game-options_options__u5S1_ > div:nth-child(1)")
+  const divSettings = document.querySelector(
+    "div.game-options_options__u5S1_ > div:nth-child(1)"
+  );
 
-    if (divSettings) {
-        const divSettingsParent = divSettings.parentNode
-        divSettingsParent.insertBefore(newDiv, divSettings)
+  if (divSettings) {
+    const divSettingsParent = divSettings.parentNode;
+    divSettingsParent.insertBefore(newDiv, divSettings);
 
-        setupEventListeners()
-    }
+    setupEventListeners();
+  }
+}
+
+function isFrenchURL() {
+  const currentUrl = window.location.href;
+  return currentUrl.includes("/fr/");
 }
 
 function setupEventListeners() {
-    const roundNumber = document.getElementById("roundNumber")
+  const roundNumber = document.getElementById("roundNumber");
 
-    const roundNumberLocal = JSON.parse(localStorage.getItem("game-settings"))
+  const roundNumberLocal = JSON.parse(
+    localStorage.getItem("game-settings")
+  ) || { rounds: 5 };
 
-    roundNumber.innerHTML = JSON.stringify(roundNumberLocal?.rounds || 1)
+  roundNumber.innerHTML = roundNumberLocal.rounds;
 
-    document.querySelector("#incrementRoundNumber").addEventListener("click", () => {
-        let currentValue = Number(roundNumber.innerHTML)
-        let newValue = currentValue + 1
-        roundNumber.innerHTML = newValue > 5 ? 5 : newValue
-        roundNumberLocal.rounds = newValue > 5 ? 5 : newValue
-        localStorage.setItem("game-settings", JSON.stringify(roundNumberLocal))
-        window.location.reload()
-    })
+  document
+    .querySelector("#incrementRoundNumber")
+    .addEventListener("click", () => {
+      let currentValue = Number(roundNumber.innerHTML);
+      let newValue = Math.min(currentValue + 1, 5);
+      if (newValue !== currentValue) {
+        roundNumber.innerHTML = newValue;
+        roundNumberLocal.rounds = newValue;
+        localStorage.setItem("game-settings", JSON.stringify(roundNumberLocal));
+        window.location.reload();
+      }
+    });
 
-    document.querySelector("#decrementRoundNumber").addEventListener("click", () => {
-        let currentValue = Number(roundNumber.innerHTML)
-        let newValue = currentValue - 1
-        roundNumber.innerHTML = newValue < 1 ? 1 : newValue
-        roundNumberLocal.rounds = newValue < 1 ? 1 : newValue
-        localStorage.setItem("game-settings", JSON.stringify(roundNumberLocal))
-        window.location.reload()
-    })
+  document
+    .querySelector("#decrementRoundNumber")
+    .addEventListener("click", () => {
+      let currentValue = Number(roundNumber.innerHTML);
+      let newValue = Math.max(currentValue - 1, 1);
+      if (newValue !== currentValue) {
+        roundNumber.innerHTML = newValue;
+        roundNumberLocal.rounds = newValue;
+        localStorage.setItem("game-settings", JSON.stringify(roundNumberLocal));
+        window.location.reload();
+      }
+    });
 }
 
 function observeDomChanges() {
-    const targetNode = document.body;
-    const config = { childList: true, subtree: true };
+  const targetNode = document.body;
+  const config = { childList: true, subtree: true };
 
-    const callback = (mutationsList, observer) => {
-        for (const mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                const settingsDiv = document.querySelector("div.game-options_options__u5S1_ > div:nth-child(1)")
-                if (settingsDiv && !document.querySelector("#roundNumber")) {
-                    addRoundSelect();
-                }
-            }
+  const callback = (mutationsList, observer) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === "childList") {
+        const settingsDiv = document.querySelector(
+          "div.game-options_options__u5S1_ > div:nth-child(1)"
+        );
+        if (settingsDiv && !document.querySelector("#roundNumber")) {
+          addRoundSelect();
         }
-    };
+      }
+    }
+  };
 
-    const observer = new MutationObserver(callback);
-    observer.observe(targetNode, config);
+  const observer = new MutationObserver(callback);
+  observer.observe(targetNode, config);
 }
 
 observeDomChanges();
