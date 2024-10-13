@@ -1,9 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Test chrome AlexisG",
+  "name": "Rounds Number - Geoguessr",
   "version": "1.0",
-  "description": "This is a test app",
-  "permissions": ["scripting", "activeTab"],
+  "description": "Grâce à cette extension, vous pouvez modifier le nombre de rounds de vos parties.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
       "matches": ["*://*.geoguessr.com/*/maps/*/play"],
