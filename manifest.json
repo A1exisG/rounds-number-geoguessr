@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Test chrome AlexisG",
+  "version": "1.0",
+  "description": "This is a test app",
+  "permissions": ["scripting", "activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.geoguessr.com/*/maps/*/play"],
+      "js": ["content-script.js"]
+    }
+  ]
+}
