@@ -5,7 +5,7 @@
 ## ✨ Features
 
 
-- **Add button** to increase or decrease the number of rounds in your Geoguessr game.
+- **Add buttons** to increase or decrease the number of rounds in your Geoguessr game.
 - **Save your preferred number of rounds** between 1 and 5 using `localStorage`.
 
 ## 🖼️ Screenshot
