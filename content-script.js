@@ -49,18 +49,35 @@ function isFrenchURL() {
 
 function setupEventListeners() {
   const roundNumber = document.getElementById("roundNumber");
+  const MAX_ROUNDS = 5;
+  const MIN_ROUNDS = 1;
+  const DEFAULT_SETTINGS = {
+    forbidMoving: false,
+    forbidRotating: false,
+    forbidZooming: false,
+    timeLimit: 120,
+    rounds: 5,
+  };
 
-  const roundNumberLocal = JSON.parse(
-    localStorage.getItem("game-settings")
-  ) || { rounds: 5 };
+  function getRoundNumberLocal() {
+    return (
+      JSON.parse(localStorage.getItem("game-settings")) || DEFAULT_SETTINGS
+    );
+  }
 
-  roundNumber.innerHTML = roundNumberLocal.rounds;
+  function updateDisplay() {
+    const roundNumberLocal = getRoundNumberLocal();
+    roundNumber.innerHTML = roundNumberLocal.rounds;
+  }
+
+  updateDisplay();
 
   document
     .querySelector("#incrementRoundNumber")
     .addEventListener("click", () => {
-      let currentValue = Number(roundNumber.innerHTML);
-      let newValue = Math.min(currentValue + 1, 5);
+      const roundNumberLocal = getRoundNumberLocal();
+      let currentValue = roundNumberLocal.rounds;
+      let newValue = Math.min(currentValue + 1, MAX_ROUNDS);
       if (newValue !== currentValue) {
         roundNumber.innerHTML = newValue;
         roundNumberLocal.rounds = newValue;
@@ -72,8 +89,9 @@ function setupEventListeners() {
   document
     .querySelector("#decrementRoundNumber")
     .addEventListener("click", () => {
-      let currentValue = Number(roundNumber.innerHTML);
-      let newValue = Math.max(currentValue - 1, 1);
+      const roundNumberLocal = getRoundNumberLocal();
+      let currentValue = roundNumberLocal.rounds;
+      let newValue = Math.max(currentValue - 1, MIN_ROUNDS);
       if (newValue !== currentValue) {
         roundNumber.innerHTML = newValue;
         roundNumberLocal.rounds = newValue;
